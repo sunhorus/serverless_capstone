@@ -6,14 +6,14 @@ import { createLogger } from '../../utils/logger'
 import { getUserId } from '../utils'
 import { CreateGalleryRequest } from '../../requests/CreateGalleryRequest'
 import { createNewGallery } from '../../helpers/galleries'
-const logger = createLogger('Albumlogs')
+const logger = createLogger('Gallerylogs')
 
 export const handler = middy ( 
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log('Processing event: ', event)
   const jwtToken = getUserId(event)
   const newGal: CreateGalleryRequest = JSON.parse(event.body)
-  logger.info(`Album creating`)
+  logger.info(`Gallery creating`)
   const newItem = await createNewGallery(newGal, jwtToken)
 
   return {

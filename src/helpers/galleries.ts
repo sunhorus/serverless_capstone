@@ -9,10 +9,6 @@ import { deleteImage, getImages } from './imagesAccess'
 
 
 
-// const albumAccess = new AlbumAccess()
-// const imagesAccess = new ImagesAccess()
-
-
 
 export async function getAllGalleries(jwtToken: string): Promise<Gallery[]> {
   const userId = jwtToken
@@ -37,7 +33,7 @@ export async function createNewGallery(createGalleryRequest: CreateGalleryReques
 
 
 export async function saveGallery(
-  saveAlbumRequest: saveGalleryRequest,
+  saveGalleryRequest: saveGalleryRequest,
   jwtToken: string,
   glaId: string
 ): Promise<Gallery> {
@@ -49,11 +45,11 @@ export async function saveGallery(
   return await updateGallery({
     id: itemId,
     userId: userId,
-    name: saveAlbumRequest.name,
-    description: saveAlbumRequest.description,
-    private: saveAlbumRequest.private,
+    name: saveGalleryRequest.name,
+    description: saveGalleryRequest.description,
+    private: saveGalleryRequest.private,
     timestamp: new Date().toISOString(),
-    imageCount: saveAlbumRequest.imageCount
+    imageCount: saveGalleryRequest.imageCount
   })
 
 }
@@ -61,11 +57,11 @@ export async function saveGallery(
 
 export async function updateGalleryImageCounter(
   jwtToken: string,
-  albumId: string,
+  glaId: string,
   counter: number
 ): Promise<Gallery> {
 
-  const itemId = albumId
+  const itemId = glaId
   const userId = jwtToken
   console.log("COUNTER LOG:" + counter)
   return await updateImageCounter({

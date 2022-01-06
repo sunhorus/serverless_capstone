@@ -7,7 +7,7 @@ import { updateGalleryImageCounter } from '../../helpers/galleries'
 import { cors } from 'middy/middlewares'
 
 
-const logger = createLogger('Albumlogs')
+const logger = createLogger('Gallerylogs')
 export const handler = middy(
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
         logger.info('image counter updated start')

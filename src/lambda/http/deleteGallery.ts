@@ -6,17 +6,17 @@ import { getUserId } from '../utils'
 import { deleteUserGallery, getGalleryById } from '../../helpers/galleries'
 import { cors } from 'middy/middlewares'
 
-const logger = createLogger('Albumlogs')
+const logger = createLogger('Gallerylogs')
 export const handler = middy(
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-        const albumId = event.pathParameters.albumId
+        const glaId = event.pathParameters.glaId
         const jwtToken = getUserId(event)
-        const gal = await getGalleryById(albumId, jwtToken)
+        const gal = await getGalleryById(glaId, jwtToken)
 
         if (!gal) {
-            logger.error(`Album not found to delete`)
-            // return new ApiResponseHelper().generateErrorResponse(404, 'Album not found')
+            logger.error(`Gallery not found to delete`)
+            // return new ApiResponseHelper().generateErrorResponse(404, 'Gallery not found')
             return {
                 statusCode: 404,
                 body: JSON.stringify({
@@ -26,9 +26,9 @@ export const handler = middy(
         }
 
         try {
-            await deleteUserGallery(albumId, jwtToken)
-            logger.info(`Album deleted`)
-            // return new ApiResponseHelper().generateDataSuccessMsgResponse(200, 'Album Deleted')
+            await deleteUserGallery(glaId, jwtToken)
+            logger.info(`Gallery deleted`)
+            // return new ApiResponseHelper().generateDataSuccessMsgResponse(200, 'Gallery Deleted')
             return {
                 statusCode: 200,
                 body: JSON.stringify({
@@ -38,7 +38,7 @@ export const handler = middy(
 
         } catch (err) {
             console.log('Failed to delete', err)
-            logger.info(`Album failed to delete`)
+            logger.info(`Gallery failed to delete`)
             // return new ApiResponseHelper().generateErrorResponse(500, 'Failed to delete')
             return {
                 statusCode: 500,

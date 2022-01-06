@@ -3,7 +3,7 @@ import { createLogger } from '../utils/logger'
 import { parseUserId } from "../auth/utils";
 
 
-const logger = createLogger('TodosAccess')
+const logger = createLogger('UtillsLogger')
 /**
  * Get a user id from an API Gateway event
  * @param event an event from API Gateway

@@ -3,12 +3,14 @@ import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { getPresignedUrl } from './s3'
 import { Image } from '../models/Image'
+import { createLogger } from '../utils/logger'
 
 
 const XAWS = AWSXRay.captureAWS(AWS)
 const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
 const imagesTable = process.env.IMAGES_TABLE
 const imageIdIndex = process.env.IMAGE_ID_INDEX
+const logger = createLogger('ImageAccessLogger')
 
 export const createImage = async (image: Image): Promise<Image> => {
 
@@ -21,8 +23,9 @@ export const createImage = async (image: Image): Promise<Image> => {
     return image;
 }
 
-export const getUploadUrl = (imageId: string) => {
-    const url = getPresignedUrl(imageId)
+export const getUploadUrl = async (imageId: string) => {
+    const url = await getPresignedUrl(imageId)
+    logger.info(`New Image URL = ${url}`)
     return url
 }
 

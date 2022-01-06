@@ -13,8 +13,8 @@ const s3: AWS.S3 = new XAWS.S3({
 
 })
 
-export const getPresignedUrl = (imageId: string): string => {
-    return s3.getSignedUrl('putObject', {
+export const getPresignedUrl = async (imageId: string): Promise<string> => {
+    return await s3.getSignedUrl('putObject', {
         Bucket: process.env.IMAGES_S3_BUCKET,
         Key: imageId,
         Expires: urlExpiration

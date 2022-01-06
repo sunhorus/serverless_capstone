@@ -5,7 +5,7 @@ import * as middy from 'middy'
 import { getUserId } from '../utils'
 import { isGalleryExists } from '../../helpers/galleries'
 import { getGalleryImages } from '../../helpers/Images'
-const logger = createLogger('Albumlogs')
+const logger = createLogger('Gallerylogs')
 export const handler = middy(
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
@@ -13,11 +13,11 @@ export const handler = middy(
   const jwtToken = getUserId(event)
   const galId = event.pathParameters.galId
 
-  const validAlbumId = await isGalleryExists(galId, jwtToken)
+  const validGlaId = await isGalleryExists(galId, jwtToken)
 
-  if (!validAlbumId) {
-    logger.error(`not a valid album`)
-    // return new ApiResponseHelper().generateErrorResponse(404,'Album not found')
+  if (!validGlaId) {
+    logger.error(`not a valid Gallery`)
+    // return new ApiResponseHelper().generateErrorResponse(404,'Gallery not found')
     return {
         statusCode: 404,
         body: JSON.stringify({
@@ -28,7 +28,7 @@ export const handler = middy(
   }
 
   const images = await getGalleryImages(galId)
-  logger.info(`Listing images for album: ${galId}`)
+  logger.info(`Listing images for Gallery: ${galId}`)
 //   return new ApiResponseHelper().generateImagesDataSuccessResponse(200,images)
   return {
     statusCode: 200,

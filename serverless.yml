@@ -19,8 +19,6 @@ provider:
 
   environment:
     MY_PROJECT: serverless-ImageGalary-Capstone-app
-    # TODOS_TABLE: Todos-${self:provider.stage}
-    # TODOS_CREATED_AT_INDEX: CreatedAtIndex
     IMAGES_S3_BUCKET: serverless-image-galary-images-253015982248-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     THUMBNAILS_S3_BUCKET: serverless-image-galary-thumbnail-253015982248-${self:provider.stage}
@@ -68,6 +66,9 @@ custom:
 
 
 functions:
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
+
   CreateGallery:
     handler: src/lambda/http/createGallery.handler
     events:
@@ -75,7 +76,7 @@ functions:
           method: post
           path: galleries
           cors: true
-          # authorizer: Auth
+          authorizer: Auth
           reqValidatorName: RequestBodyValidator
           documentation:
             summary: create new Gallery
@@ -102,7 +103,7 @@ functions:
           method: get
           path: galleries
           cors: true
-          # authorizer: Auth
+          authorizer: Auth
     iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: "Allow"
@@ -115,109 +116,52 @@ functions:
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+  
+  UploadImage:
+    handler: src/lambda/http/uploadImage.handler
+    events:
+      - http:
+          method: post
+          path: galleries/{glaId}/images
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Add new Image to gallery
+            description: Add new Image to gallery
+            requestModels:
+              "application/json": UploadImage
+      - http:
+          method: get
+          path: galleries/{glaId}
+          cors: true
+          authorizer: Auth
 
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
 
 resources:
   Resources:
-    # Add necessary AWS resources. You will need at least the following AWS resources
-    # TODO: Fill the properties
-    # Feel free to change the names as you like. 
     GatewayResponseDefault4XX: ${file(./resource/GatewayResponce.yml)}
-      # Type: AWS::ApiGateway::GatewayResponse
-      # Properties:
-      #   ResponseParameters:
-      #     gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-      #     gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      #     gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST,PATCH'"
-      #   ResponseType: DEFAULT_4XX
-      #   RestApiId:
-      #     Ref: ApiGatewayRestApi
-    
     GalleriesDynamoDBTable: ${file(./resource/GalleriesTable.yml)}
-      # Type: AWS::DynamoDB::Table
-      # Properties:
-      #   AttributeDefinitions:
-      #     - AttributeName: userId
-      #       AttributeType: S
-      #     - AttributeName: id
-      #       AttributeType: S
-      #   KeySchema:
-      #     - AttributeName: userId
-      #       KeyType: HASH
-      #     - AttributeName: id
-      #       KeyType: RANGE
-      #   BillingMode: PAY_PER_REQUEST
-      #   TableName: ${self:provider.environment.GALLERIES_TABLE}
-    
     ImagesDynamoDBTable: ${file(./resource/ImagesTable.yml)}
-      # Type: "AWS::DynamoDB::Table"
-      # Properties:
-      #   AttributeDefinitions:
-      #     - AttributeName: albumId
-      #       AttributeType: S
-      #     - AttributeName: timestamp
-      #       AttributeType: S
-      #     - AttributeName: imageId
-      #       AttributeType: S
-      #   KeySchema:
-      #     - AttributeName: albumId
-      #       KeyType: HASH
-      #     - AttributeName: timestamp
-      #       KeyType: RANGE
-      #   BillingMode: PAY_PER_REQUEST
-
-      #   TableName: ${self:provider.environment.IMAGES_TABLE}
-      #   GlobalSecondaryIndexes:
-      #     - IndexName: ${self:provider.environment.IMAGE_ID_INDEX}
-      #       KeySchema:
-      #         - AttributeName: imageId
-      #           KeyType: HASH
-      #       Projection:
-      #         ProjectionType: ALL
-    
-    # TODO: Complete the bucket properties below. 
-    # Do not forget to add the CorsConfiguration propoerty
     AttachmentsBucket: ${file(./resource/AttachmentsBucket.yml)}
-      # Type: AWS::S3::Bucket
-      # Properties:
-      #   BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
-      #   CorsConfiguration:
-      #     CorsRules:
-      #       -
-      #         AllowedOrigins:
-      #           - '*'
-      #         AllowedHeaders:
-      #           - '*'
-      #         AllowedMethods:
-      #           - GET
-      #           - PUT
-      #           - POST
-      #           - DELETE
-      #           - HEAD
-      #         MaxAge: ${self:provider.environment.SIGNED_URL_EXPIRATION}
-
-    # TODO: Complete the policy below and attach it to the bucket defined above
-    # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
     BucketPolicy: ${file(./resource/BucketPolicy.yml)}
-      # Type: AWS::S3::BucketPolicy
-      # Properties:
-      #   PolicyDocument:
-      #     Id: MyPolicy
-      #     Version: "2012-10-17"
-      #     Statement:
-      #       - Sid: PublicReadForGetBucketObjects
-      #         Effect: Allow
-      #         Principal: '*'
-      #         Action: 's3:GetObject'
-      #         Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
-      #   Bucket: 
-      #     Ref: AttachmentsBucket
-
     RequestBodyValidator: ${file(./resource/RequestBodyValidator.yml)}
-      # Type: AWS::ApiGateway::RequestValidator
-      # Properties:
-      #   Name: 'request-body-validator'
-      #   RestApiId:
-      #     Ref: ApiGatewayRestApi
-      #   ValidateRequestBody: true
-      #   ValidateRequestParameters: false
