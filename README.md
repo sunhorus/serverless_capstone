@@ -14,6 +14,7 @@ JWT tokken is added to Collection Variables to be able to use all Endpoints.
 
 ## Deployment output
 
+```
 Service Information
 service: capstone-final-project
 stage: dev
@@ -58,3 +59,4 @@ AwsDocApiId: 1n3fuexhwk
 EnterpriseLogAccessIamRole: arn:aws:iam::253015982248:role/capstone-final-project-de-EnterpriseLogAccessIamRo-TAXG7RZC942Z
 EditGalleryLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:253015982248:function:capstone-final-project-dev-EditGallery:9
 ServiceEndpoint: https://1n3fuexhwk.execute-api.us-east-1.amazonaws.com/dev
+```
