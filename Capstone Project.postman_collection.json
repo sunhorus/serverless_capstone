@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "5cbbbb96-4385-4ff9-a997-4db4b3bb3c07",
+		"name": "Capstone Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get_Galleries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_Private_Galleries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries/myGalleries",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries",
+						"myGalleries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add_Gallery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AuthKey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n    {\n        \"name\": \"gallery 3\",\n        \"description\": \"woderfull trip\"\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_Gallery",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Image 4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries/06d82b12-262d-4e7c-bf26-20f5ead14169",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries",
+						"06d82b12-262d-4e7c-bf26-20f5ead14169"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit_Gallery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AuthKey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n    {\n        \"name\": \"gallery 12\",\n        \"description\": \"woderfull trip edit\",\n        \"private\" : false\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries/463162d5-1ff2-47c0-8086-21d85db93dd0/save",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries",
+						"463162d5-1ff2-47c0-8086-21d85db93dd0",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_Image_of_Gallery",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries/463162d5-1ff2-47c0-8086-21d85db93dd0/images",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries",
+						"463162d5-1ff2-47c0-8086-21d85db93dd0",
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Access_Token Generator",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "{{AuthKey}}",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myRandomeString",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "{{auth0_client_secret}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{auth0_client_id}}",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://{{auth0_domain}}/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://{{auth0_domain}}/authorize?audience={{auth0_audience}}",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Serverless-Capstone",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "Add_Image_To_Gallery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AuthKey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"test Image 1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/galleries/463162d5-1ff2-47c0-8086-21d85db93dd0/images/",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"galleries",
+						"463162d5-1ff2-47c0-8086-21d85db93dd0",
+						"images",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE_IMAGE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/images/d1076528-f773-4ce0-b399-62bd0ccaebca",
+					"protocol": "https",
+					"host": [
+						"{{apiId}}",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"images",
+						"d1076528-f773-4ce0-b399-62bd0ccaebca"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{AuthKey}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiId",
+			"value": "1n3fuexhwk"
+		},
+		{
+			"key": "AuthKey",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFVWkNNME16UkVFMk56ZzFSVEU1UTBRd09USXpNa0l4UkRNeFJVWkZRamM0UkVZeU1UTTJSUSJ9.eyJpc3MiOiJodHRwczovL3N1bmhvcnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwOTE0OTc2MjAxMDgwODkyODYzOSIsImF1ZCI6WyJodHRwczovL3N1bmhvcnVzLmF1dGgwLmNvbS9hcGkvdjIvIiwiaHR0cHM6Ly9zdW5ob3J1cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjQxNzMyMTM5LCJleHAiOjE2NDE4MTg1MzksImF6cCI6IkYzSUtHa1dIemVnbjRmd0YxY3laZVc1ZDlyeDh3UXdCIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.lerApBVYNR8ViTolKEljQUya8R2iCYaS_1K10aceCmwxIben7Vf_eQzBcb6Fv68Co4th1mpHf0afJOvCtNO0vWL0k_UCOOyPoM8gGztDl9rOIqSPn-Q7iOk8KKKtzgPqWB-1DgOFguVlmv7m_eF9DNCp2i5GWH3L7CxMWk05IzhQLP59K-IHaa3SucoS0ggQFu9ZpTDirGTsdmoodrGuNrrFO7bD1a0SDmVEJb4tGz5N7tGBvXUxdWSSlWNdzWXps2RxKItfnVAP1_FEymBtH0u7SmGKTlNW-A_fbC41Urd2JpjOpCAg68OK3nzBfgcyjRJZwD9I4WXNEY4MTijZmQ"
+		},
+		{
+			"key": "auth0_domain",
+			"value": "sunhorus.auth0.com"
+		},
+		{
+			"key": "auth0_audience",
+			"value": "https://sunhorus.auth0.com/api/v2/"
+		},
+		{
+			"key": "auth0_client_id",
+			"value": "F3IKGkWHzegn4fwF1cyZeW5d9rx8wQwB"
+		},
+		{
+			"key": "auth0_client_secret",
+			"value": "3chriFYpxCPlQnPY5FWHPxV2OMB5YOJsBjjR7SrPD-hKE6ZAlwsYBPUc51-kiOct"
+		}
+	]
+}

@@ -117,7 +117,7 @@ functions:
           method: get
           path: galleries
           cors: true
-          # authorizer: Auth
+          authorizer: Auth
     # iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: "Allow"
@@ -228,7 +228,7 @@ functions:
           method: get
           path: galleries/{glaId}/images
           cors: true
-          # authorizer: Auth
+          authorizer: Auth
     iamRoleStatements:
       - Effect: "Allow"
         Action:
