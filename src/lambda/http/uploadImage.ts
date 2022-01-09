@@ -17,7 +17,7 @@ export const handler = middy(
         logger.info('Processing event Upload Image: ', event)
         const jwtToken = getUserId(event)
         const glaId = event.pathParameters.glaId
-        const validGlaId = await isGalleryExists(glaId, jwtToken)
+        const validGlaId = await isGalleryExists(glaId/*, jwtToken*/)
 
         if (!validGlaId) {
             logger.error(`Gallery not found`)

@@ -1,12 +1,12 @@
 import * as AWS from 'aws-sdk'
-// import * as AWSXRay from 'aws-xray-sdk'
+import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { Gallery } from '../models/gallery'
 
-// const XAWS = AWSXRay.captureAWS(AWS)
-// const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
-const docClient: DocumentClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8089'})
+const XAWS = AWSXRay.captureAWS(AWS)
+const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
+// const docClient: DocumentClient = new AWS.DynamoDB.DocumentClient({ endpoint: 'http://localhost:8089' })
 const galleriesTable = process.env.GALLERIES_TABLE
 
 // const s3Bucket: Types = new XAWS.S3({ signatureVersion: 'v4' })
@@ -16,32 +16,57 @@ const galleriesTable = process.env.GALLERIES_TABLE
 const logger = createLogger('GalleriesAccess')
 
 
-export const getGalleries = async (userId: string): Promise<Gallery[]> => {
-  logger.info('Getting Galleries')
+export const getGalleries = async (): Promise<Gallery[]> => {
+  logger.info(`Getting all Public Galleries`)
 
-  const params = {
+  const result = await docClient.scan({
     TableName: galleriesTable,
-    KeyConditionExpression: 'userId = :userId',
+    FilterExpression: '#private = :private',
+    ExpressionAttributeNames: {
+      '#private' : 'private'
+    },
+    // KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
-      ':userId': userId,
+      // ':userId': userId,
+      ':private' : false
     }
-  }
-  const result = await docClient.query(params).promise()
+  }).promise()
   const items = result.Items
   return items as Gallery[]
 }
 
-export const galleryExists = async (userId: string, galleryId: string): Promise<boolean> => {
+export const getUserGalleries = async (userId: string): Promise<Gallery[]> => {
+  logger.info(`Getting Galleries for user ${userId}`)
+
+  const result = await docClient.query({
+    TableName: galleriesTable,
+    KeyConditionExpression: 'userId = :userId',
+    ExpressionAttributeValues: {
+      ':userId': userId
+    }
+  }).promise()
+  const items = result.Items
+  return items as Gallery[]
+}
+
+export const galleryExists = async (/*userId: string,*/ galleryId: string): Promise<boolean> => {
   const params = {
     TableName: galleriesTable,
-    Key: {
-      id: galleryId,
-      userId: userId
+    FilterExpression : '#id = :id',
+    ExpressionAttributeNames: {
+      '#id' : 'id'
+    },
+    ExpressionAttributeValues : {
+      ':id' : galleryId
     }
+    // Key: {
+    //   id: galleryId,
+    //   // userId: userId
+    // }
   }
-  const result = await docClient.get(params).promise()
+  const result = await docClient.scan(params).promise()
 
-  return !!result.Item
+  return !!result.Items
 }
 
 export const getGallery = async (userId: string, galleryId: string): Promise<Gallery> => {
@@ -75,9 +100,9 @@ export const updateGallery = async (gal: Gallery): Promise<Gallery> => {
   await docClient.update({
     TableName: galleriesTable,
     Key: { userId: gal.userId, id: gal.id },
-    UpdateExpression: "SET #desc = :r, #nmz = :p",
-    ExpressionAttributeNames: { "#desc": "description", "#nmz": "name" },
-    ExpressionAttributeValues: { ":r": gal.description, ":p": gal.name },
+    UpdateExpression: "SET #desc = :r, #nmz = :p, #pri = :pri",
+    ExpressionAttributeNames: { "#desc": "description", "#nmz": "name", "#pri": "private" },
+    ExpressionAttributeValues: { ":r": gal.description, ":p": gal.name, ":pri": gal.private },
     ReturnValues: "UPDATED_NEW"
   }).promise()
 
@@ -99,7 +124,7 @@ export const updateImageCounter = async (gal: Gallery, counter: number): Promise
 }
 
 
-  export const deleteGallery = async (userId: string, galId: string): Promise < void> => {
+export const deleteGallery = async (userId: string, galId: string): Promise<void> => {
 
 
   const params = {
@@ -109,5 +134,5 @@ export const updateImageCounter = async (gal: Gallery, counter: number): Promise
       userId: userId
     }
   }
-    await docClient.delete(params).promise()
+  await docClient.delete(params).promise()
 }

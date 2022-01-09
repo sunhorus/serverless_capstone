@@ -5,5 +5,5 @@ export interface Gallery {
     userId: string
     private: boolean
     timestamp: string,
-    imageCount: number
+    imageCount?: number
   }

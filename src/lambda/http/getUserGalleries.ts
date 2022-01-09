@@ -1,16 +1,17 @@
 import 'source-map-support/register'
-import { APIGatewayProxyResult } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 // import { getUserId } from '../utils'
-import { getAllGalleries } from '../../helpers/galleries'
+import { getAllUserGalleries } from '../../helpers/galleries'
+import { getUserId } from '../utils'
 
 const logger = createLogger('Gallerieslogs')
 export const handler = middy(
-    async (): Promise<APIGatewayProxyResult> => {
-        // const jwtToken = getUserId(event)
-        const gla = await getAllGalleries();
+    async (event : APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+        const jwtToken = getUserId(event)
+        const gla = await getAllUserGalleries(jwtToken);
         logger.info(`Listing all Galleries`)
 
         return {

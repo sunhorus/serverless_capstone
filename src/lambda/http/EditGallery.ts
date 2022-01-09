@@ -18,7 +18,7 @@ export const handler = middy(
         const galId = event.pathParameters.glaId
         const jwtToken = getUserId(event)
         const newGla: saveGalleryRequest = JSON.parse(event.body)
-        logger.info(`Gallery updating`)
+        logger.info(`Gallery updating ${newGla}`)
         const newItem = await saveGallery(newGla, jwtToken, galId)
         return {
             statusCode: 201,

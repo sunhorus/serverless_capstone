@@ -1,7 +1,7 @@
 import { Gallery } from '../models/gallery'
 import { Image } from '../models/Image'
 
-import { createGallery, deleteGallery, galleryExists, getGalleries, getGallery, updateGallery, updateImageCounter } from './galleriesAccess'
+import { createGallery, deleteGallery, galleryExists, getGalleries, getGallery, getUserGalleries, updateGallery, updateImageCounter } from './galleriesAccess'
 import * as uuid from 'uuid'
 import { CreateGalleryRequest } from '../requests/CreateGalleryRequest'
 import { saveGalleryRequest } from '../requests/saveGalleryRequest'
@@ -10,9 +10,14 @@ import { deleteImage, getImages } from './imagesAccess'
 
 
 
-export async function getAllGalleries(jwtToken: string): Promise<Gallery[]> {
-  const userId = jwtToken
-  return getGalleries(userId)
+export async function getAllGalleries(): Promise<Gallery[]> {
+  
+  return await getGalleries()
+}
+
+export const getAllUserGalleries = async (jwtToken: string) => {
+  const userId = jwtToken;
+  return await getUserGalleries(userId)
 }
 
 export async function createNewGallery(createGalleryRequest: CreateGalleryRequest, jwtToken: string): Promise<Gallery> {
@@ -48,8 +53,8 @@ export async function saveGallery(
     name: saveGalleryRequest.name,
     description: saveGalleryRequest.description,
     private: saveGalleryRequest.private,
-    timestamp: new Date().toISOString(),
-    imageCount: saveGalleryRequest.imageCount
+    timestamp: new Date().toISOString()
+    // imageCount: saveGalleryRequest.imageCount
   })
 
 }
@@ -79,11 +84,11 @@ export async function updateGalleryImageCounter(
 
 export async function isGalleryExists(
   glaId: string,
-  jwtToken: string
+  // jwtToken: string
 ): Promise<boolean> {
-  const userId = jwtToken
+  // const userId = jwtToken
   return await galleryExists(
-    userId,
+    // userId,
     glaId
   )
 }

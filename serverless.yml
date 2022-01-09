@@ -61,9 +61,9 @@ custom:
       - name: EditGallery
         contentType: application/json
         schema: ${file(src/models/json-schema/create_gallery_json_request.json)}
-      - name: UpdateGalleriesImage
-        contentType: application/json
-        schema: ${file(src/models/json-schema/update_gallery_json_request.json)}
+      # - name: UpdateGalleriesImage
+      #   contentType: application/json
+      #   schema: ${file(src/models/json-schema/update_gallery_json_request.json)}
   dynamodb:
   # If you only want to use DynamoDB Local in some stages, declare them here
     stages:
@@ -131,6 +131,27 @@ functions:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
   
+  GetUserGalleries:
+    handler: src/lambda/http/getUserGalleries.handler
+    events:
+      - http:
+          method: get
+          path: galleries/myGalleries
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+
   UploadImage:
     handler: src/lambda/http/uploadImage.handler
     events:

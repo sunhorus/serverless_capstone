@@ -2,7 +2,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 import * as middy from 'middy'
-import { getUserId } from '../utils'
+// import { getUserId } from '../utils'
 import { isGalleryExists } from '../../helpers/galleries'
 import { getGalleryImages } from '../../helpers/Images'
 import { cors } from 'middy/middlewares'
@@ -11,10 +11,10 @@ export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
     // logger.info(`event Logging ${JSON.stringify(event)}`)
-    const jwtToken = getUserId(event)
+    // const jwtToken = getUserId(event)
     const galId = event.pathParameters.glaId
     logger.info(`Getting Images for gallery ID ${galId}`)
-    const validGlaId = await isGalleryExists(galId, jwtToken)
+    const validGlaId = await isGalleryExists(galId/*, jwtToken*/)
 
     if (!validGlaId) {
       logger.error(`not a valid Gallery`)
