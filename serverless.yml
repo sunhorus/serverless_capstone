@@ -118,7 +118,7 @@ functions:
           path: galleries
           cors: true
           # authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
+    # iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -129,6 +129,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Query
+          - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
   
   GetUserGalleries:
@@ -139,7 +140,6 @@ functions:
           path: galleries/myGalleries
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -183,6 +183,7 @@ functions:
           - dynamodb:GetItem
           - dynamodb:PutItem
           - dynamodb:UpdateItem
+          - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
       - Effect: Allow
         Action:
@@ -208,7 +209,7 @@ functions:
             requestModels:
               "application/json": EditGallery
     iamRoleStatements:
-      - Effect: "Allow" # xray permissions (required)
+      - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
           - "xray:PutTelemetryRecords"
@@ -243,6 +244,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:GetItem
+          - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
 
   DeleteGallery:
@@ -254,7 +256,7 @@ functions:
           cors: true
           authorizer: Auth
     iamRoleStatements:
-      - Effect: "Allow" # xray permissions (required)
+      - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
           - "xray:PutTelemetryRecords"
@@ -268,6 +270,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:GetItem
+          - dynamodb:Scan
           - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
 

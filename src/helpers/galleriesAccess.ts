@@ -19,6 +19,9 @@ const logger = createLogger('GalleriesAccess')
 export const getGalleries = async (): Promise<Gallery[]> => {
   logger.info(`Getting all Public Galleries`)
 
+  //Scan operation used in this function to be able to get 
+  // all shared galleries without the need to provide partition key
+  // which will act as fillter and the desired output will not be possible
   const result = await docClient.scan({
     TableName: galleriesTable,
     FilterExpression: '#private = :private',
@@ -64,9 +67,12 @@ export const galleryExists = async (/*userId: string,*/ galleryId: string): Prom
     //   // userId: userId
     // }
   }
+  //Scan operation used in this function to be able to get 
+  // all shared galleries without the need to provide partition key
+  // which will act as fillter and the desired output will not be possible
   const result = await docClient.scan(params).promise()
 
-  return !!result.Items
+  return !!result.Items.length
 }
 
 export const getGallery = async (userId: string, galleryId: string): Promise<Gallery> => {
