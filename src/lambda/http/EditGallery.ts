@@ -12,21 +12,20 @@ import { getUserId } from '../utils'
 const logger = createLogger('Gallerylogs')
 export const handler = middy(
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-        console.log('Processing event: ', event)
-        logger.info('path:', event.path)
-        logger.info('Path Gallery id:', event.pathParameters.galId)
-        const galId = event.pathParameters.galId
+        console.log(`Processing event: , ${event}`)
+        logger.info(`path:, ${event.path}`)
+        logger.info(`Path Gallery id:, ${event.pathParameters.glaId}`)
+        const galId = event.pathParameters.glaId
         const jwtToken = getUserId(event)
         const newGla: saveGalleryRequest = JSON.parse(event.body)
         logger.info(`Gallery updating`)
         const newItem = await saveGallery(newGla, jwtToken, galId)
-        // return new ApiResponseHelper().generateDataSuccessResponse(201, 'item', newItem)
         return {
             statusCode: 201,
             body: JSON.stringify({
                 items: newItem
             })
-          }
+        }
 
     })
 

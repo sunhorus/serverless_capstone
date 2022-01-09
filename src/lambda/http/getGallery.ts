@@ -15,7 +15,7 @@ export const handler = middy(
   const gal = await getGalleryById(galId, jwtToken)
 
   if (!gal) {
-    logger.error(`Album not found`)
+    logger.error(`Gallery not found`)
     // return new ApiResponseHelper().generateErrorResponse(404,'Album not found')
     return {
         statusCode: 404,

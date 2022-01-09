@@ -20,18 +20,17 @@ export async function addImage(
     timestamp: new Date().toISOString(),
     imageId: imageId,
     title: createImageRequest.title,
-    imageUrl: `https://${imageBucket}.s3.amazonaws.com/${imageId}`,
-    thumb : ""
+    imageUrl: `https://${imageBucket}.s3.amazonaws.com/${imageId}`
   })
 }
 
-export function get_Image_link(imageId: string) {
-    return getUploadUrl(imageId)
+export async function get_Image_link(imageId: string) {
+    return await getUploadUrl(imageId)
   }
   
   
   export async function getGalleryImages(glaId: string): Promise<Image[]> {
-    return getImages(glaId)
+    return await getImages(glaId)
   }
   
   export async function getImagebyId(imageId: string): Promise<Image> {

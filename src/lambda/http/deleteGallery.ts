@@ -16,7 +16,6 @@ export const handler = middy(
 
         if (!gal) {
             logger.error(`Gallery not found to delete`)
-            // return new ApiResponseHelper().generateErrorResponse(404, 'Gallery not found')
             return {
                 statusCode: 404,
                 body: JSON.stringify({
@@ -28,7 +27,6 @@ export const handler = middy(
         try {
             await deleteUserGallery(glaId, jwtToken)
             logger.info(`Gallery deleted`)
-            // return new ApiResponseHelper().generateDataSuccessMsgResponse(200, 'Gallery Deleted')
             return {
                 statusCode: 200,
                 body: JSON.stringify({
@@ -39,7 +37,6 @@ export const handler = middy(
         } catch (err) {
             console.log('Failed to delete', err)
             logger.info(`Gallery failed to delete`)
-            // return new ApiResponseHelper().generateErrorResponse(500, 'Failed to delete')
             return {
                 statusCode: 500,
                 body: JSON.stringify({

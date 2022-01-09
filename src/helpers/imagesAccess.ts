@@ -1,13 +1,14 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { getPresignedUrl } from './s3'
 import { Image } from '../models/Image'
 import { createLogger } from '../utils/logger'
 
 
-const XAWS = AWSXRay.captureAWS(AWS)
-const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
+// const XAWS = AWSXRay.captureAWS(AWS)
+// const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
+const docClient: DocumentClient = new AWS.DynamoDB.DocumentClient({ endpoint: 'http://localhost:8089' })
 const imagesTable = process.env.IMAGES_TABLE
 const imageIdIndex = process.env.IMAGE_ID_INDEX
 const logger = createLogger('ImageAccessLogger')
@@ -24,13 +25,14 @@ export const createImage = async (image: Image): Promise<Image> => {
 }
 
 export const getUploadUrl = async (imageId: string) => {
+    logger.info(`Trying to get image URL`)
     const url = await getPresignedUrl(imageId)
     logger.info(`New Image URL = ${url}`)
     return url
 }
 
 
-export const getImages = async (galId: string): Promise<Image[]> => {
+export const getImages = async (glaId: string): Promise<Image[]> => {
 
     const params = {
         TableName: imagesTable,
@@ -39,7 +41,7 @@ export const getImages = async (galId: string): Promise<Image[]> => {
             "#id": "galleryId"
         },
         ExpressionAttributeValues: {
-            ":galleryId": galId
+            ":galleryId": glaId
         }
     };
 
@@ -50,7 +52,7 @@ export const getImages = async (galId: string): Promise<Image[]> => {
 
 export const getImage = async (imageId: string): Promise<Image> => {
 
-    var params = {
+    const params = {
         TableName: imagesTable,
         IndexName: imageIdIndex,
         KeyConditionExpression: "#id = :imageId",

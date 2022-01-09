@@ -5,5 +5,5 @@ export interface Image {
     imageId: string
     title: string
     imageUrl: string
-    thumb:string
+    thumb?:string
   }

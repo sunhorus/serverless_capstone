@@ -2,7 +2,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import 'source-map-support/register'
-import { isGalleryExists } from '../../helpers/galleries'
+import { getGalleryById, isGalleryExists } from '../../helpers/galleries'
+import { updateImageCounter } from '../../helpers/galleriesAccess'
 import { addImage, get_Image_link } from '../../helpers/Images'
 import { CreateImageRequest } from '../../requests/CreateImageRequest'
 import { createLogger } from '../../utils/logger'
@@ -20,7 +21,6 @@ export const handler = middy(
 
         if (!validGlaId) {
             logger.error(`Gallery not found`)
-            // return new ApiResponseHelper().generateErrorResponse(404,'Gallery not found')
             return {
                 statusCode: 404,
                 body: JSON.stringify({
@@ -29,13 +29,17 @@ export const handler = middy(
             }
 
         }
+        const TempGallery = await getGalleryById(glaId, jwtToken)
         logger.info(`Gallery Found ${validGlaId} ID: ${glaId}`)
         const newImage: CreateImageRequest = JSON.parse(event.body)
-        logger.info(`Req BODY  ${newImage}`)
+        logger.info(`Req BODY  ${JSON.stringify(newImage)}`)
         const newItem = await addImage(newImage, glaId, jwtToken)
 
         const url = await get_Image_link(newItem.imageId)
-        logger.info(`Image Uploaded`)
+        const tempCount = TempGallery.imageCount + 1
+        console.log(`updateing gallery ${JSON.stringify(TempGallery)} New Count = ${tempCount}`)
+        await updateImageCounter(TempGallery, tempCount)
+        logger.info(`Image Link Sent Successfully`)
 
         return {
             statusCode: 201,

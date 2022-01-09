@@ -1,11 +1,12 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { Gallery } from '../models/gallery'
 
-const XAWS = AWSXRay.captureAWS(AWS)
-const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
+// const XAWS = AWSXRay.captureAWS(AWS)
+// const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient()
+const docClient: DocumentClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8089'})
 const galleriesTable = process.env.GALLERIES_TABLE
 
 // const s3Bucket: Types = new XAWS.S3({ signatureVersion: 'v4' })
@@ -22,7 +23,7 @@ export const getGalleries = async (userId: string): Promise<Gallery[]> => {
     TableName: galleriesTable,
     KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
-      ':userId': userId
+      ':userId': userId,
     }
   }
   const result = await docClient.query(params).promise()
@@ -73,8 +74,8 @@ export const updateGallery = async (gal: Gallery): Promise<Gallery> => {
   console.log('Description:' + gal.description)
   await docClient.update({
     TableName: galleriesTable,
-    Key: { "userId": gal.userId, "id": gal.id },
-    UpdateExpression: "set #desc = :r, #nmz=:p",
+    Key: { userId: gal.userId, id: gal.id },
+    UpdateExpression: "SET #desc = :r, #nmz = :p",
     ExpressionAttributeNames: { "#desc": "description", "#nmz": "name" },
     ExpressionAttributeValues: { ":r": gal.description, ":p": gal.name },
     ReturnValues: "UPDATED_NEW"
@@ -88,7 +89,7 @@ export const updateImageCounter = async (gal: Gallery, counter: number): Promise
   await docClient.update({
     TableName: galleriesTable,
     Key: { "userId": gal.userId, "id": gal.id },
-    UpdateExpression: "ADD #icn :r",
+    UpdateExpression: "set #icn=:r",
     ExpressionAttributeNames: { "#icn": "imageCount" },
     ExpressionAttributeValues: { ":r": counter },
     ReturnValues: "UPDATED_NEW"

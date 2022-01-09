@@ -1,14 +1,14 @@
 Type: "AWS::DynamoDB::Table"
 Properties:
   AttributeDefinitions:
-    - AttributeName: albumId
+    - AttributeName: galleryId
       AttributeType: S
     - AttributeName: timestamp
       AttributeType: S
     - AttributeName: imageId
       AttributeType: S
   KeySchema:
-    - AttributeName: albumId
+    - AttributeName: galleryId
       KeyType: HASH
     - AttributeName: timestamp
       KeyType: RANGE

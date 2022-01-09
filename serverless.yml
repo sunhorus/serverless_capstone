@@ -7,7 +7,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
-  # variablesResolutionMode: 20210326
+  variablesResolutionMode: 20210326
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
   tracing:
@@ -23,9 +23,9 @@ provider:
     SIGNED_URL_EXPIRATION: 300
     THUMBNAILS_S3_BUCKET: serverless-image-galary-thumbnail-253015982248-${self:provider.stage}
     GALLERIES_TABLE: galleries-253015982248-${self:provider.stage}
-    IMAGES_TABLE: gallery-images-253015982248-${self:provider.stage}
+    IMAGES_TABLE: gallery-images4-253015982248-${self:provider.stage}
     IMAGE_ID_INDEX: ImageIdIndex
-    SLS_DEBUG: '*'
+
 
   iam:
     role:
@@ -41,7 +41,8 @@ plugins:
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
-
+  - serverless-dynamodb-local
+  - serverless-offline
 custom:
   topicName: imagesTopic-253015982248-${self:provider.stage} 
   documentation:
@@ -57,13 +58,26 @@ custom:
       - name: UploadImage
         contentType: application/json
         schema: ${file(src/models/json-schema/create_image_json_request.json)}
-      - name: SaveGalleries
+      - name: EditGallery
         contentType: application/json
         schema: ${file(src/models/json-schema/create_gallery_json_request.json)}
       - name: UpdateGalleriesImage
         contentType: application/json
         schema: ${file(src/models/json-schema/update_gallery_json_request.json)}
-
+  dynamodb:
+  # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      port: 8089
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      # seed: true
+      convertEmptyValues: true
+    # Uncomment only if you already have a DynamoDB running locally
+    noStart: true
 
 functions:
   Auth:
@@ -103,7 +117,7 @@ functions:
           method: get
           path: galleries
           cors: true
-          authorizer: Auth
+          # authorizer: Auth
     iamRoleStatementsName: ${self:provider.environment.MY_PROJECT}-get-gallery-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: "Allow"
@@ -130,11 +144,11 @@ functions:
             description: Add new Image to gallery
             requestModels:
               "application/json": UploadImage
-      - http:
-          method: get
-          path: galleries/{glaId}
-          cors: true
-          authorizer: Auth
+      # - http:
+      #     method: get
+      #     path: galleries/{glaId}
+      #     cors: true
+      #     authorizer: Auth
 
     iamRoleStatements:
       - Effect: "Allow"
@@ -147,6 +161,7 @@ functions:
         Action:
           - dynamodb:GetItem
           - dynamodb:PutItem
+          - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
       - Effect: Allow
         Action:
@@ -156,6 +171,109 @@ functions:
         Action:
           - s3:PutObject
         Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
+
+  EditGallery:
+    handler: src/lambda/http/EditGallery.handler
+    events:
+      - http:
+          method: post
+          path: galleries/{glaId}/save
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: update Gallery
+            description: update Gallery
+            requestModels:
+              "application/json": EditGallery
+    iamRoleStatements:
+      - Effect: "Allow" # xray permissions (required)
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+
+  GetImages:
+    handler: src/lambda/http/getImages.handler
+    events:
+      - http:
+          method: get
+          path: galleries/{glaId}/images
+          cors: true
+          # authorizer: Auth
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+
+  DeleteGallery:
+    handler: src/lambda/http/deleteGallery.handler
+    events:
+      - http:
+          method: delete
+          path: galleries/{glaId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: "Allow" # xray permissions (required)
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GALLERIES_TABLE}
+
+  DeleteImage:
+    handler: src/lambda/http/deleteImage.handler
+    events:
+      - http:
+          method: delete
+          path: images/{imageId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}/index/${self:provider.environment.IMAGE_ID_INDEX}
+
 
 resources:
   Resources:

@@ -24,7 +24,7 @@ export async function createNewGallery(createGalleryRequest: CreateGalleryReques
     userId: userId,
     name: createGalleryRequest.name,
     description: createGalleryRequest.description,
-    private: createGalleryRequest.private,
+    private: true,
     timestamp: new Date().toISOString(),
     imageCount: 0
 
