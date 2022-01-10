@@ -11,12 +11,11 @@ export const handler = middy(
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
   const jwtToken = getUserId(event)
-  const galId = event.pathParameters.galId
+  const galId = event.pathParameters.glaId
   const gal = await getGalleryById(galId, jwtToken)
 
   if (!gal) {
     logger.error(`Gallery not found`)
-    // return new ApiResponseHelper().generateErrorResponse(404,'Album not found')
     return {
         statusCode: 404,
         body: JSON.stringify({
