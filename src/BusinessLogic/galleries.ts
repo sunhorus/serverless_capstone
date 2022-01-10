@@ -1,11 +1,11 @@
 import { Gallery } from '../models/gallery'
 import { Image } from '../models/Image'
 
-import { createGallery, deleteGallery, galleryExists, getGalleries, getGallery, getUserGalleries, updateGallery, updateImageCounter } from './galleriesAccess'
+import { createGallery, deleteGallery, galleryExists, getGalleries, getGallery, getUserGalleries, updateGallery, updateImageCounter } from '../helpers/galleriesAccess'
 import * as uuid from 'uuid'
 import { CreateGalleryRequest } from '../requests/CreateGalleryRequest'
 import { saveGalleryRequest } from '../requests/saveGalleryRequest'
-import { deleteImage, getImages } from './imagesAccess'
+import { deleteImage, getImages } from '../helpers/imagesAccess'
 
 
 

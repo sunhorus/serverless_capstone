@@ -4,7 +4,7 @@ import { createLogger } from '../../utils/logger'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 // import { getUserId } from '../utils'
-import { getAllUserGalleries } from '../../helpers/galleries'
+import { getAllUserGalleries } from '../../BusinessLogic/galleries'
 import { getUserId } from '../utils'
 
 const logger = createLogger('Gallerieslogs')

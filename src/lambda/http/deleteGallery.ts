@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 import * as middy from 'middy'
 import { getUserId } from '../utils'
-import { deleteUserGallery, getGalleryById } from '../../helpers/galleries'
+import { deleteUserGallery, getGalleryById } from '../../BusinessLogic/galleries'
 import { cors } from 'middy/middlewares'
 
 const logger = createLogger('Gallerylogs')

@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 import { getUserId } from '../utils'
 import * as middy from 'middy'
-import { getGalleryById } from '../../helpers/galleries'
+import { getGalleryById } from '../../BusinessLogic/galleries'
 import { cors } from 'middy/middlewares'
 
 const logger = createLogger('Albumlogs')

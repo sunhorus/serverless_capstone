@@ -3,8 +3,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 import * as middy from 'middy'
 // import { getUserId } from '../utils'
-import { isGalleryExists } from '../../helpers/galleries'
-import { getGalleryImages } from '../../helpers/Images'
+import { isGalleryExists } from '../../BusinessLogic/galleries'
+import { getGalleryImages } from '../../BusinessLogic/Images'
 import { cors } from 'middy/middlewares'
 const logger = createLogger('Gallerylogs')
 export const handler = middy(

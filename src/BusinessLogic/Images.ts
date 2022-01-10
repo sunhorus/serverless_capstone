@@ -1,6 +1,6 @@
 import { Image } from "../models/Image"
 import { CreateImageRequest } from "../requests/CreateImageRequest"
-import { createImage, deleteImage, getAllImages, getImage, getImages, getUploadUrl } from "./imagesAccess"
+import { createImage, deleteImage, getAllImages, getImage, getImages, getUploadUrl } from "./../helpers/imagesAccess"
 import * as uuid from 'uuid'
 
 const imageBucket = process.env.IMAGES_S3_BUCKET

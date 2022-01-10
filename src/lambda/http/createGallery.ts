@@ -5,7 +5,7 @@ import { cors } from 'middy/middlewares'
 import { createLogger } from '../../utils/logger'
 import { getUserId } from '../utils'
 import { CreateGalleryRequest } from '../../requests/CreateGalleryRequest'
-import { createNewGallery } from '../../helpers/galleries'
+import { createNewGallery } from '../../BusinessLogic/galleries'
 const logger = createLogger('Gallerylogs')
 
 export const handler = middy ( 
